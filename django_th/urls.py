@@ -1,32 +1,47 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from django_th.forms.wizard import DummyForm, ProviderForm, ConsumerForm, ServicesDescriptionForm
 
-from django_th.views import TriggerListView, TriggerDeleteView, TriggerUpdateView, TriggerEditedTemplateView
-from django_th.views import TriggerDeletedTemplateView
-from django_th.views_fbv import logout_view, trigger_switch_all_to, trigger_edit, trigger_on_off, fire_trigger
+from django_th.views import TriggerListView, TriggerDeleteView, TriggerUpdateView, TriggerEditedTemplateView, MeUpdate
+from django_th.views import TriggerDeletedTemplateView, me
+from django_th.views_fbv import trigger_switch_all_to, trigger_edit, trigger_on_off, fire_trigger
 from django_th.views_fbv import service_related_triggers_switch_to
 
 from django_th.views_userservices import UserServiceListView, UserServiceCreateView, UserServiceUpdateView
 from django_th.views_userservices import UserServiceDeleteView, renew_service
 from django_th.views_wizard import UserServiceWizard, finalcallback
 
+from django_js_reverse.views import urls_js
+
 urlpatterns = [
+    path('jsreverse/', urls_js, name='js_reverse'),
+
     # ****************************************
     # admin module
     # ****************************************
     path('admin/', admin.site.urls),
     # ****************************************
+    # profil
+    # ****************************************
+    path(r'me/', me, name='me'),
+    path(r'me/edit/', MeUpdate.as_view(), name='edit_me'),
+
+    # ****************************************
     # auth module
     # ****************************************
+    path(
+        'auth/password_change/',
+        auth_views.PasswordChangeView.as_view(template_name='auth/change_password.html'),
+    ),
+    path(
+        'auth/password_change/done/',
+        auth_views.PasswordChangeDoneView.as_view(template_name='auth/password_change_done.html'),
+    ),
     path('auth/', include('django.contrib.auth.urls')),
-    # ****************************************
-    # customized logout action
-    # ****************************************
-    path('logout/', logout_view, name='logout'),
 
     # ****************************************
     # trigger happy module
@@ -51,7 +66,7 @@ urlpatterns = [
     # ****************************************
     # * service
     # ****************************************
-    path('th/service/', UserServiceListView.as_view(), name='user_services'),
+    path('th/services/', UserServiceListView.as_view(), name='user_services'),
     url(r'^th/service/add/(?P<service_name>\w+)$', UserServiceCreateView.as_view(), name='add_service'),
     url(r'^th/service/edit/(?P<pk>\d+)$', UserServiceUpdateView.as_view(), name='edit_service'),
     url(r'^th/service/delete/(?P<pk>\d+)$', UserServiceDeleteView.as_view(), name='delete_service'),

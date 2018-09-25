@@ -122,14 +122,13 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'formtools',
-    # 'django_js_reverse',
+    'django_js_reverse',
     'rest_framework',
     'django_th',
     'th_rss',
     # uncomment the lines to enable the service you need
     'th_evernote',
     'th_github',
-    'th_instapush',
     'th_mastodon',
     'th_pelican',
     'th_pocket',
@@ -260,3 +259,5 @@ SECRET_KEY = env.str('SECRET_KEY', default='to be defined :P')
 TEST_RUNNER = 'django_th.runner.DiscoverRunnerTriggerHappy'
 # Unit Test are buggy for this app ; so do not make them
 TEST_RUNNER_WHITELIST = ('oauth2_provider', 'corsheaders')
+
+LOGOUT_REDIRECT_URL = '/th/'
